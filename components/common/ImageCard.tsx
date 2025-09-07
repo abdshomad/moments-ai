@@ -111,17 +111,19 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
   const animationMessages = [ "Bringing your moment to life...", "Animating the scene...", "Adding a touch of magic...", "Finalizing the video..." ];
   const [currentMessage, setCurrentMessage] = useState(animationMessages[0]);
 
+  // Fix: Replaced NodeJS.Timeout with an inferred type from setInterval and improved the effect's logic
+  // to correctly manage the interval lifecycle. The previous implementation caused a type error in
+  // browser environments and could lead to unhandled intervals.
   React.useEffect(() => {
-    let interval: NodeJS.Timeout;
     if (isAnimating) {
-        interval = setInterval(() => {
+        const interval = setInterval(() => {
             setCurrentMessage(prev => {
                 const currentIndex = animationMessages.indexOf(prev);
                 return animationMessages[(currentIndex + 1) % animationMessages.length];
             });
         }, 3000);
+        return () => clearInterval(interval);
     }
-    return () => clearInterval(interval);
   }, [isAnimating]);
   
   const handleAudioGenerated = (audioUrl: string, audioPrompt: string) => {
