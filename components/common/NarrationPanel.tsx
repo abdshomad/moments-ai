@@ -1,0 +1,74 @@
+import React, { useState } from 'react';
+import { VOICES } from '../../services/elevenLabsService';
+import Spinner from './Spinner';
+
+interface NarrationPanelProps {
+    resultId: string;
+    onGenerateAudio: (id: string, text: string, voiceId: string) => Promise<void>;
+    onComplete: () => void;
+}
+
+const NarrationPanel: React.FC<NarrationPanelProps> = ({ resultId, onGenerateAudio, onComplete }) => {
+    const [audioPrompt, setAudioPrompt] = useState('Meet Charlie, our new family wizard!');
+    const [selectedVoiceId, setSelectedVoiceId] = useState(VOICES[0].id);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleGenerate = async () => {
+        if (!audioPrompt || isLoading) return;
+        setIsLoading(true);
+        setError(null);
+        try {
+            await onGenerateAudio(resultId, audioPrompt, selectedVoiceId);
+            onComplete();
+        } catch (e) {
+            console.error(e);
+            const errorMessage = e instanceof Error ? e.message : 'Failed to generate audio.';
+            if (errorMessage.includes("API key is not configured")) {
+                setError("ElevenLabs API key is not set. Please configure it to use this feature.");
+            } else {
+                setError(errorMessage);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="p-4 border-t border-gray-700">
+            <h4 className="text-sm font-semibold mb-2 text-gray-300">Add Voice-over</h4>
+            <div className="mb-3">
+                <label className="block text-xs font-medium text-gray-400 mb-1.5">Select a Voice</label>
+                <div className="grid grid-cols-2 gap-2">
+                    {VOICES.map(voice => (
+                        <button
+                            key={voice.id}
+                            onClick={() => setSelectedVoiceId(voice.id)}
+                            className={`p-2 rounded-md text-left transition-all duration-200 border ${selectedVoiceId === voice.id ? 'bg-brand-teal/20 border-brand-teal ring-1 ring-brand-teal' : 'bg-gray-900 border-gray-600 hover:bg-gray-700/50'}`}
+                        >
+                            <p className="font-bold text-white text-sm">{voice.name}</p>
+                            <p className="text-gray-400 text-xs">{voice.description}</p>
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <textarea
+                value={audioPrompt}
+                onChange={(e) => setAudioPrompt(e.target.value)}
+                placeholder="Type your narration here..."
+                className="w-full p-2 bg-gray-900 border border-gray-600 rounded-md focus:ring-2 focus:ring-brand-teal focus:outline-none transition resize-none text-sm"
+                rows={3}
+            />
+            <button
+                onClick={handleGenerate}
+                disabled={isLoading || !audioPrompt}
+                className="w-full mt-2 bg-brand-teal text-white font-bold py-2 px-3 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2 text-sm"
+            >
+                {isLoading ? <><Spinner /> Generating Audio...</> : 'Generate Audio'}
+            </button>
+            {error && <p className="text-red-400 mt-2 text-xs text-center">{error}</p>}
+        </div>
+    );
+};
+
+export default NarrationPanel;
