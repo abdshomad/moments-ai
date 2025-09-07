@@ -60,12 +60,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
 
     return (
-        <div className="flex items-center gap-2 p-2 bg-gray-900/70 border-t border-gray-700">
+        <div className="flex items-center gap-2 p-2 bg-input/70 border-t border-border">
             <audio ref={audioRef} src={src} preload="auto" />
-            <button onClick={togglePlayPause} className="text-brand-teal hover:text-white transition-colors" aria-label={isPlaying ? 'Pause audio' : 'Play audio'}>
+            <button onClick={togglePlayPause} className="text-brand-teal hover:text-foreground/80 transition-colors" aria-label={isPlaying ? 'Pause audio' : 'Play audio'}>
                 {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <p className="text-xs text-gray-400">Voice-over ready</p>
+            <p className="text-xs text-muted-foreground">Voice-over ready</p>
         </div>
     );
 };

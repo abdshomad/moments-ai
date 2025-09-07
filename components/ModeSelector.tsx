@@ -13,16 +13,16 @@ const ModeButton: React.FC<{
     isActive: boolean;
     onClick: () => void;
 }> = ({ label, description, isActive, onClick }) => {
-    const activeClasses = 'border-brand-purple ring-2 ring-brand-purple bg-gray-800/50';
-    const inactiveClasses = 'border-gray-700 bg-gray-800 hover:border-gray-500 hover:bg-gray-700/50';
+    const activeClasses = 'border-brand-purple ring-2 ring-brand-purple bg-card/80';
+    const inactiveClasses = 'border-border bg-card hover:border-border/80 hover:bg-card/50';
 
     return (
         <button
             onClick={onClick}
             className={`flex-1 p-6 rounded-xl border text-left transition-all duration-300 transform hover:scale-105 ${isActive ? activeClasses : inactiveClasses}`}
         >
-            <h3 className="text-xl font-bold text-white">{label}</h3>
-            <p className="mt-1 text-gray-400">{description}</p>
+            <h3 className="text-xl font-bold text-card-foreground">{label}</h3>
+            <p className="mt-1 text-muted-foreground">{description}</p>
         </button>
     );
 };

@@ -68,7 +68,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
   };
 
   return (
-    <div className={`group relative flex flex-col overflow-hidden rounded-lg border bg-gray-800/50 transition-all duration-300 ${isLatest ? 'border-brand-purple shadow-lg shadow-brand-purple/20' : 'border-gray-700'}`}>
+    <div className={`group relative flex flex-col overflow-hidden rounded-lg border bg-card transition-all duration-300 ${isLatest ? 'border-brand-purple shadow-lg shadow-ring/20' : 'border-border'}`}>
       <div className="relative">
         <img src={result.imageUrl} alt={result.prompt} className="w-full h-auto aspect-square object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">

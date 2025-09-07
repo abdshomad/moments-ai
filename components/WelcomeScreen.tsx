@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 
 interface WelcomeScreenProps {
@@ -22,17 +23,17 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onDismiss }) => {
 
     return (
         <div 
-            className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
         >
             <div 
-                className={`bg-gray-800/50 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 text-center transform transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                className={`bg-card/50 border border-border rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 text-center transform transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
             >
                 <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-brand-pink to-brand-teal animate-gradient-x">
                         MomentsAI
                     </span>
                 </h1>
-                <p className="mt-2 mb-8 text-lg text-gray-400">
+                <p className="mt-2 mb-8 text-lg text-muted-foreground">
                     Turn your photos into extraordinary stories.
                 </p>
                 <button

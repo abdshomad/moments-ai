@@ -35,19 +35,19 @@ const NarrationPanel: React.FC<NarrationPanelProps> = ({ resultId, onGenerateAud
     };
 
     return (
-        <div className="p-4 border-t border-gray-700">
-            <h4 className="text-sm font-semibold mb-2 text-gray-300">Add Voice-over</h4>
+        <div className="p-4 border-t border-border">
+            <h4 className="text-sm font-semibold mb-2 text-card-foreground">Add Voice-over</h4>
             <div className="mb-3">
-                <label className="block text-xs font-medium text-gray-400 mb-1.5">Select a Voice</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">Select a Voice</label>
                 <div className="grid grid-cols-2 gap-2">
                     {VOICES.map(voice => (
                         <button
                             key={voice.id}
                             onClick={() => setSelectedVoiceId(voice.id)}
-                            className={`p-2 rounded-md text-left transition-all duration-200 border ${selectedVoiceId === voice.id ? 'bg-brand-teal/20 border-brand-teal ring-1 ring-brand-teal' : 'bg-gray-900 border-gray-600 hover:bg-gray-700/50'}`}
+                            className={`p-2 rounded-md text-left transition-all duration-200 border ${selectedVoiceId === voice.id ? 'bg-brand-teal/20 border-brand-teal ring-1 ring-brand-teal' : 'bg-input border-border hover:bg-accent'}`}
                         >
-                            <p className="font-bold text-white text-sm">{voice.name}</p>
-                            <p className="text-gray-400 text-xs">{voice.description}</p>
+                            <p className="font-bold text-card-foreground text-sm">{voice.name}</p>
+                            <p className="text-muted-foreground text-xs">{voice.description}</p>
                         </button>
                     ))}
                 </div>
@@ -56,7 +56,7 @@ const NarrationPanel: React.FC<NarrationPanelProps> = ({ resultId, onGenerateAud
                 value={audioPrompt}
                 onChange={(e) => setAudioPrompt(e.target.value)}
                 placeholder="Type your narration here..."
-                className="w-full p-2 bg-gray-900 border border-gray-600 rounded-md focus:ring-2 focus:ring-brand-teal focus:outline-none transition resize-none text-sm"
+                className="w-full p-2 bg-input border border-border rounded-md focus:ring-2 focus:ring-brand-teal focus:outline-none transition resize-none text-sm"
                 rows={3}
             />
             <button
@@ -66,7 +66,7 @@ const NarrationPanel: React.FC<NarrationPanelProps> = ({ resultId, onGenerateAud
             >
                 {isLoading ? <><Spinner /> Generating Audio...</> : 'Generate Audio'}
             </button>
-            {error && <p className="text-red-400 mt-2 text-xs text-center">{error}</p>}
+            {error && <p className="text-destructive mt-2 text-xs text-center">{error}</p>}
         </div>
     );
 };

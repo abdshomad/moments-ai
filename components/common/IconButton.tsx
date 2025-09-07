@@ -14,7 +14,7 @@ const IconButton: React.FC<IconButtonProps> = ({ onClick, children, label, disab
       aria-label={label}
       title={label}
       disabled={disabled}
-      className="p-2 rounded-full bg-gray-800/50 hover:bg-gray-700/70 text-gray-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple disabled:opacity-50 disabled:cursor-not-allowed"
+      className="p-2 rounded-full bg-card/50 hover:bg-card/70 text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {children}
     </button>

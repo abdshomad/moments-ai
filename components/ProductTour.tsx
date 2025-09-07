@@ -1,4 +1,5 @@
 
+
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { TOUR_STEPS } from '../hooks/useProductTour';
 
@@ -83,23 +84,23 @@ const ProductTour: React.FC<ProductTourProps> = ({ isTourActive, currentStep, cu
 
     return (
         <>
-            <div className="fixed inset-0 bg-black/70 z-50" onClick={stopTour} />
+            <div className="fixed inset-0 bg-background/70 z-50" onClick={stopTour} />
             <div
                 className="absolute bg-transparent rounded-lg border-2 border-brand-purple border-dashed pointer-events-none transition-all duration-300 z-50"
                 style={highlightStyle}
             />
             <div
                 ref={tooltipRef}
-                className="absolute bg-gray-800 p-4 rounded-lg shadow-2xl w-72 transition-all duration-300 z-50"
+                className="absolute bg-popover text-popover-foreground p-4 rounded-lg shadow-2xl w-72 transition-all duration-300 z-50"
                 style={tooltipStyle}
             >
                  <h3 className="font-bold text-lg text-brand-teal mb-2">{currentStep.title}</h3>
-                <p className="text-sm text-gray-300 mb-4">{currentStep.content}</p>
+                <p className="text-sm text-popover-foreground/80 mb-4">{currentStep.content}</p>
                 <div className="flex justify-between items-center">
-                    <button onClick={stopTour} className="text-xs text-gray-400 hover:text-white transition-colors">Skip Tour</button>
+                    <button onClick={stopTour} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Skip Tour</button>
                     <div className="flex items-center gap-2">
                         {currentStepIndex > 0 && (
-                            <button onClick={goToPrevStep} className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-md">Previous</button>
+                            <button onClick={goToPrevStep} className="text-sm bg-secondary hover:bg-secondary/80 text-secondary-foreground px-3 py-1 rounded-md">Previous</button>
                         )}
                         <button onClick={goToNextStep} className="text-sm bg-gradient-to-r from-brand-purple to-brand-pink text-white font-bold px-4 py-1 rounded-md hover:opacity-90 transition-opacity">
                             {currentStepIndex === TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}

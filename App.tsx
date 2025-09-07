@@ -8,6 +8,7 @@ import ImageEditor from './components/ImageEditor';
 import WelcomeScreen from './components/WelcomeScreen';
 import ProductTour from './components/ProductTour';
 import { useProductTour } from './hooks/useProductTour';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<GenerationMode>(GenerationMode.EDIT);
@@ -32,7 +33,7 @@ const App: React.FC = () => {
 
 
   return (
-    <>
+    <ThemeProvider>
       {showWelcome && <WelcomeScreen onDismiss={handleWelcomeDismiss} />}
       <ProductTour 
         isTourActive={tour.isTourActive}
@@ -42,7 +43,7 @@ const App: React.FC = () => {
         goToPrevStep={tour.goToPrevStep}
         stopTour={tour.stopTour}
       />
-      <div className="min-h-screen bg-gray-900 font-sans text-gray-200 flex flex-col items-center p-4 selection:bg-brand-purple selection:text-white">
+      <div className="min-h-screen bg-background font-sans text-foreground flex flex-col items-center p-4 selection:bg-brand-purple selection:text-white">
         <div className="w-full max-w-4xl mx-auto">
           <Header />
           <ModeSelector currentMode={mode} onSelectMode={setMode} />
@@ -52,7 +53,7 @@ const App: React.FC = () => {
           </main>
         </div>
       </div>
-    </>
+    </ThemeProvider>
   );
 };
 
