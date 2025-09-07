@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { editImageWithText, fileToBase64 } from '../services/geminiService';
+import { editImageWithText, fileToBase64, generateVideoFromImageAndText } from '../services/geminiService';
 import { generateSpeech } from '../services/elevenLabsService';
 import { GenerationResult } from '../types';
 
@@ -60,6 +60,15 @@ export const useImageEditor = () => {
             )
         );
     };
+    
+    const handleAnimate = async (id: string, base64Image: string, prompt: string) => {
+        const videoUrl = await generateVideoFromImageAndText(base64Image, prompt);
+        setGenerations(prevGenerations => 
+            prevGenerations.map(gen => 
+                gen.id === id ? { ...gen, videoUrl } : gen
+            )
+        );
+    };
 
     const handleRefine = () => {
         promptInputRef.current?.focus();
@@ -82,6 +91,7 @@ export const useImageEditor = () => {
         handleFileChange,
         handleGenerate,
         handleGenerateAudio,
+        handleAnimate,
         handleRefine,
         triggerFileUpload,
     };

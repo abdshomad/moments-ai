@@ -106,3 +106,44 @@ export const enhancePrompt = async (currentPrompt: string): Promise<string> => {
         throw new Error("Could not enhance the prompt.");
     }
 };
+
+export const generateVideoFromImageAndText = async (base64Image: string, prompt: string): Promise<string> => {
+    try {
+        const [meta, data] = base64Image.split(',');
+        const mimeType = meta.match(/:(.*?);/)?.[1] ?? 'image/png';
+        
+        let operation = await ai.models.generateVideos({
+            model: 'veo-2.0-generate-001',
+            prompt: `Animate this image: ${prompt}`,
+            image: {
+                imageBytes: data,
+                mimeType: mimeType,
+            },
+            config: {
+                numberOfVideos: 1
+            }
+        });
+
+        // Poll for completion
+        while (!operation.done) {
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds between polls
+            operation = await ai.operations.getVideosOperation({ operation: operation });
+        }
+
+        const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+        if (!downloadLink) {
+            throw new Error("Video generation completed but no download link was provided.");
+        }
+        
+        // Fetch the video and return as a data URL to avoid CORS issues and API key exposure on the client
+        const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+        if (!response.ok) {
+            throw new Error(`Failed to download the generated video. Status: ${response.status}`);
+        }
+        const videoBlob = await response.blob();
+        return URL.createObjectURL(videoBlob);
+    } catch (error) {
+        console.error("Error generating video:", error);
+        throw error;
+    }
+};

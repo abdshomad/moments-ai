@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { generateImageFromText, generateCreativePrompt, enhancePrompt } from '../services/geminiService';
+import { generateImageFromText, generateCreativePrompt, enhancePrompt, generateVideoFromImageAndText } from '../services/geminiService';
 import { generateSpeech } from '../services/elevenLabsService';
 import { GenerationResult } from '../types';
 import Spinner from './common/Spinner';
@@ -73,6 +73,15 @@ const ImageGenerator: React.FC = () => {
         );
     };
     
+    const handleAnimate = async (id: string, base64Image: string, prompt: string) => {
+        const videoUrl = await generateVideoFromImageAndText(base64Image, prompt);
+        setGenerations(prevGenerations => 
+            prevGenerations.map(gen => 
+                gen.id === id ? { ...gen, videoUrl } : gen
+            )
+        );
+    };
+
     return (
         <div className="bg-card p-6 rounded-lg border border-border">
             <div className="flex flex-col gap-4">
@@ -134,6 +143,7 @@ const ImageGenerator: React.FC = () => {
                              result={gen}
                              isLatest={index === 0}
                              onGenerateAudio={handleGenerateAudio}
+                             onAnimate={handleAnimate}
                             />
                         ))}
                     </div>

@@ -11,4 +11,5 @@ export interface GenerationResult {
   altText?: string;
   audioUrl?: string;
   audioPrompt?: string;
+  videoUrl?: string;
 }
