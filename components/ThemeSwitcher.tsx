@@ -10,9 +10,15 @@ const SettingsIcon: React.FC = () => (
 
 const ThemeSwitcher: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { theme, setTheme } = useTheme();
+    const { theme, setTheme, elevenLabsApiKey, setElevenLabsApiKey } = useTheme();
+    const [localApiKey, setLocalApiKey] = useState(elevenLabsApiKey || '');
+    const [keySaved, setKeySaved] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        setLocalApiKey(elevenLabsApiKey || '');
+    }, [elevenLabsApiKey]);
+    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -25,31 +31,57 @@ const ThemeSwitcher: React.FC = () => {
 
     const handleThemeChange = (newTheme: 'dark' | 'light' | 'banana') => {
         setTheme(newTheme);
-        setIsOpen(false);
     };
+
+    const handleSaveKey = () => {
+        setElevenLabsApiKey(localApiKey);
+        setKeySaved(true);
+        setTimeout(() => setKeySaved(false), 2000); // Hide message after 2s
+    };
+
 
     return (
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
-                aria-label="Open theme switcher"
+                aria-label="Open settings menu"
                 aria-haspopup="true"
                 aria-expanded={isOpen}
             >
                 <SettingsIcon />
             </button>
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg py-1 z-20">
-                    <button onClick={() => handleThemeChange('dark')} className={`block w-full text-left px-4 py-2 text-sm ${theme === 'dark' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
-                       <span className="mr-2">⚫️</span> Dark
-                    </button>
-                    <button onClick={() => handleThemeChange('light')} className={`block w-full text-left px-4 py-2 text-sm ${theme === 'light' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
-                       <span className="mr-2">⚪️</span> Light
-                    </button>
-                    <button onClick={() => handleThemeChange('banana')} className={`block w-full text-left px-4 py-2 text-sm ${theme === 'banana' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
-                       <span className="mr-2">🍌</span> Banana
-                    </button>
+                <div className="absolute right-0 mt-2 w-64 bg-popover border border-border rounded-lg shadow-lg z-20">
+                    <div className="p-2">
+                        <button onClick={() => handleThemeChange('dark')} className={`flex items-center w-full text-left px-3 py-2 text-sm rounded-md ${theme === 'dark' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
+                           <span className="mr-2 text-base">⚫️</span> Dark
+                        </button>
+                        <button onClick={() => handleThemeChange('light')} className={`flex items-center w-full text-left px-3 py-2 text-sm rounded-md ${theme === 'light' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
+                           <span className="mr-2 text-base">⚪️</span> Light
+                        </button>
+                        <button onClick={() => handleThemeChange('banana')} className={`flex items-center w-full text-left px-3 py-2 text-sm rounded-md ${theme === 'banana' ? 'text-primary-foreground bg-primary' : 'text-popover-foreground'} hover:bg-accent`}>
+                           <span className="mr-2 text-base">🍌</span> Banana
+                        </button>
+                    </div>
+                    <div className="border-t border-border"></div>
+                    <div className="p-3">
+                        <label htmlFor="apiKeyInput" className="block text-xs font-medium text-muted-foreground mb-1.5">ElevenLabs API Key</label>
+                        <input 
+                            id="apiKeyInput"
+                            type="password" 
+                            value={localApiKey} 
+                            onChange={(e) => setLocalApiKey(e.target.value)} 
+                            className="w-full p-2 bg-input border border-border rounded-md text-sm focus:ring-2 focus:ring-brand-purple focus:outline-none transition"
+                            placeholder="Enter your API key"
+                        />
+                        <button 
+                            onClick={handleSaveKey} 
+                            className="w-full mt-2 bg-brand-teal text-white font-bold py-1.5 px-3 rounded-md text-sm hover:opacity-90 transition-opacity"
+                        >
+                            {keySaved ? 'Saved!' : 'Save Key'}
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

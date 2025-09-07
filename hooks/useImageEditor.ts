@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
 import { editImageWithText, fileToBase64, generateVideoFromImageAndText } from '../services/geminiService';
-import { generateSpeech } from '../services/elevenLabsService';
 import { GenerationResult } from '../types';
 
 interface SourceImage {
@@ -52,11 +51,10 @@ export const useImageEditor = () => {
         }
     }, [generations, sourceImage, prompt, isLoading]);
 
-    const handleGenerateAudio = async (id: string, text: string, voiceId: string) => {
-        const audioUrl = await generateSpeech(text, voiceId);
+    const handleAudioGenerated = (id: string, audioUrl: string, audioPrompt: string) => {
         setGenerations(prevGenerations => 
             prevGenerations.map(gen => 
-                gen.id === id ? { ...gen, audioUrl, audioPrompt: text } : gen
+                gen.id === id ? { ...gen, audioUrl, audioPrompt } : gen
             )
         );
     };
@@ -90,7 +88,7 @@ export const useImageEditor = () => {
         promptInputRef,
         handleFileChange,
         handleGenerate,
-        handleGenerateAudio,
+        handleAudioGenerated,
         handleAnimate,
         handleRefine,
         triggerFileUpload,

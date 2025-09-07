@@ -11,11 +11,11 @@ interface ImageCardProps {
   result: GenerationResult;
   isLatest?: boolean;
   onRefine?: () => void;
-  onGenerateAudio?: (id: string, text: string, voiceId: string) => Promise<void>;
+  onAudioGenerated?: (id: string, audioUrl: string, audioPrompt: string) => void;
   onAnimate?: (id: string, imageUrl: string, prompt: string) => Promise<void>;
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefine, onGenerateAudio, onAnimate }) => {
+const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefine, onAudioGenerated, onAnimate }) => {
   const [isNarrationOpen, setIsNarrationOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -32,7 +32,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
         await onAnimate(result.id, result.imageUrl, result.prompt);
     } catch (e) {
         console.error("Animation failed:", e);
-        alert("Failed to animate the image. Please try again.");
+        const errorMessage = e instanceof Error ? e.message : "An unknown error occurred. Please try again.";
+        alert(errorMessage);
     } finally {
         setIsAnimating(false);
     }
@@ -122,6 +123,13 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
     }
     return () => clearInterval(interval);
   }, [isAnimating]);
+  
+  const handleAudioGenerated = (audioUrl: string, audioPrompt: string) => {
+    if (onAudioGenerated) {
+        onAudioGenerated(result.id, audioUrl, audioPrompt);
+    }
+    setIsNarrationOpen(false);
+  }
 
   return (
     <div className={`group relative flex flex-col overflow-hidden rounded-lg border bg-card transition-all duration-300 ${isLatest ? 'border-brand-purple shadow-lg shadow-ring/20' : 'border-border'}`}>
@@ -143,7 +151,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
           <p className="text-sm text-gray-200 line-clamp-3">{result.prompt}</p>
           <div className="absolute top-3 right-3 flex items-center gap-2">
             {isLatest && onAnimate && !hasAudio && !hasVideo && <IconButton onClick={handleAnimate} label="Animate this image" disabled={isActionInProgress}><AnimateIcon /></IconButton>}
-            {onGenerateAudio && !hasAudio && !hasVideo && <IconButton onClick={() => setIsNarrationOpen(p => !p)} label="Add voice-over" disabled={isActionInProgress}><AudioIcon /></IconButton>}
+            {onAudioGenerated && !hasAudio && !hasVideo && <IconButton onClick={() => setIsNarrationOpen(p => !p)} label="Add voice-over" disabled={isActionInProgress}><AudioIcon /></IconButton>}
             {isLatest && onRefine && !hasVideo && <IconButton onClick={onRefine} label="Refine this image" disabled={isActionInProgress}><RefineIcon /></IconButton>}
             {result.imageUrl && (
               <>
@@ -155,7 +163,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ result, isLatest = false, onRefin
           {isLatest && <span className="absolute top-3 left-3 bg-brand-purple text-white text-xs font-bold px-2 py-1 rounded-full">LATEST</span>}
         </div>
       </div>
-      {isNarrationOpen && onGenerateAudio && <NarrationPanel resultId={result.id} onGenerateAudio={onGenerateAudio} onComplete={() => setIsNarrationOpen(false)} />}
+      {isNarrationOpen && onAudioGenerated && <NarrationPanel onAudioGenerated={handleAudioGenerated} />}
       {hasAudio && <AudioPlayer src={result.audioUrl!} />}
     </div>
   );

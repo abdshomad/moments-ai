@@ -1,6 +1,7 @@
 
 
 
+
 import React from 'react';
 import Spinner from './common/Spinner';
 import ImageCard from './common/ImageCard';
@@ -18,7 +19,7 @@ const ImageEditor: React.FC = () => {
         promptInputRef,
         handleFileChange,
         handleGenerate,
-        handleGenerateAudio,
+        handleAudioGenerated,
         handleAnimate,
         handleRefine,
         triggerFileUpload,
@@ -78,7 +79,7 @@ const ImageEditor: React.FC = () => {
                                  result={gen} 
                                  isLatest={index === 0} 
                                  onRefine={index === 0 ? handleRefine : undefined}
-                                 onGenerateAudio={handleGenerateAudio}
+                                 onAudioGenerated={handleAudioGenerated}
                                  onAnimate={handleAnimate}
                                 />
                             ))}

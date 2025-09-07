@@ -2,56 +2,63 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 
 type Theme = 'dark' | 'light' | 'banana';
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
-}
-
-interface ThemeProviderState {
+interface AppState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  elevenLabsApiKey: string | null;
+  setElevenLabsApiKey: (key: string | null) => void;
 }
 
-const initialState: ThemeProviderState = {
-  theme: 'dark',
-  setTheme: () => null,
-};
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
-  storageKey = 'momentsai-theme',
-}: ThemeProviderProps) {
+}: { children: React.ReactNode, defaultTheme?: Theme }) {
+  const themeStorageKey = 'momentsai-theme';
+  const apiKeyStorageKey = 'momentsai-elevenlabs-api-key';
+
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    () => (localStorage.getItem(themeStorageKey) as Theme) || defaultTheme
+  );
+  
+  const [elevenLabsApiKey, setElevenLabsApiKeyInternal] = useState<string | null>(
+    () => localStorage.getItem(apiKeyStorageKey)
   );
 
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark', 'banana');
     root.classList.add(theme);
-  }, [theme]);
+    localStorage.setItem(themeStorageKey, theme);
+  }, [theme, themeStorageKey]);
+  
+  const setElevenLabsApiKey = (key: string | null) => {
+    setElevenLabsApiKeyInternal(key);
+    if (key) {
+      localStorage.setItem(apiKeyStorageKey, key);
+    } else {
+      localStorage.removeItem(apiKeyStorageKey);
+    }
+  };
+
 
   const value = useMemo(() => ({
     theme,
-    setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme);
-      setTheme(newTheme);
-    },
-  }), [theme, storageKey]);
+    setTheme,
+    elevenLabsApiKey,
+    setElevenLabsApiKey,
+  }), [theme, elevenLabsApiKey]);
 
   return (
-    <ThemeProviderContext.Provider value={value}>
+    <AppStateContext.Provider value={value}>
       {children}
-    </ThemeProviderContext.Provider>
+    </AppStateContext.Provider>
   );
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
+  const context = useContext(AppStateContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }

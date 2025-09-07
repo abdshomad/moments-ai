@@ -126,7 +126,7 @@ export const generateVideoFromImageAndText = async (base64Image: string, prompt:
 
         // Poll for completion
         while (!operation.done) {
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds between polls
+            await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds between polls
             operation = await ai.operations.getVideosOperation({ operation: operation });
         }
 
@@ -142,8 +142,18 @@ export const generateVideoFromImageAndText = async (base64Image: string, prompt:
         }
         const videoBlob = await response.blob();
         return URL.createObjectURL(videoBlob);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error generating video:", error);
-        throw error;
+        if (error && typeof error === 'object' && error.error && typeof error.error === 'object' && error.error.message) {
+            const apiError = error.error;
+            if (apiError.status === 'RESOURCE_EXHAUSTED') {
+                throw new Error("Animation failed due to high demand (rate limit exceeded). Please wait a moment and try again.");
+            }
+            throw new Error(apiError.message);
+        }
+        if (error instanceof Error) {
+            throw error;
+        }
+        throw new Error("An unknown error occurred during video generation.");
     }
 };

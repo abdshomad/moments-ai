@@ -1,7 +1,7 @@
 
+
 import React, { useState } from 'react';
 import { generateImageFromText, generateCreativePrompt, enhancePrompt, generateVideoFromImageAndText } from '../services/geminiService';
-import { generateSpeech } from '../services/elevenLabsService';
 import { GenerationResult } from '../types';
 import Spinner from './common/Spinner';
 import ImageCard from './common/ImageCard';
@@ -64,11 +64,10 @@ const ImageGenerator: React.FC = () => {
         }
     };
 
-    const handleGenerateAudio = async (id: string, text: string, voiceId: string) => {
-        const audioUrl = await generateSpeech(text, voiceId);
+    const handleAudioGenerated = (id: string, audioUrl: string, audioPrompt: string) => {
         setGenerations(prevGenerations => 
             prevGenerations.map(gen => 
-                gen.id === id ? { ...gen, audioUrl, audioPrompt: text } : gen
+                gen.id === id ? { ...gen, audioUrl, audioPrompt } : gen
             )
         );
     };
@@ -142,7 +141,7 @@ const ImageGenerator: React.FC = () => {
                              key={gen.id}
                              result={gen}
                              isLatest={index === 0}
-                             onGenerateAudio={handleGenerateAudio}
+                             onAudioGenerated={handleAudioGenerated}
                              onAnimate={handleAnimate}
                             />
                         ))}

@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
-import { VOICES } from '../../services/elevenLabsService';
+import { VOICES, generateSpeech } from '../../services/elevenLabsService';
 import Spinner from './Spinner';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface NarrationPanelProps {
-    resultId: string;
-    onGenerateAudio: (id: string, text: string, voiceId: string) => Promise<void>;
-    onComplete: () => void;
+    onAudioGenerated: (audioUrl: string, audioPrompt: string) => void;
 }
 
-const NarrationPanel: React.FC<NarrationPanelProps> = ({ resultId, onGenerateAudio, onComplete }) => {
+const NarrationPanel: React.FC<NarrationPanelProps> = ({ onAudioGenerated }) => {
     const [audioPrompt, setAudioPrompt] = useState('Meet Charlie, our new family wizard!');
     const [selectedVoiceId, setSelectedVoiceId] = useState(VOICES[0].id);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { elevenLabsApiKey } = useTheme();
 
     const handleGenerate = async () => {
         if (!audioPrompt || isLoading) return;
+        
+        if (!elevenLabsApiKey) {
+            setError("API Key is required. Please add it in the settings menu (⚙️).");
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         try {
-            await onGenerateAudio(resultId, audioPrompt, selectedVoiceId);
-            onComplete();
+            const audioUrl = await generateSpeech(audioPrompt, selectedVoiceId, elevenLabsApiKey);
+            onAudioGenerated(audioUrl, audioPrompt);
         } catch (e) {
             console.error(e);
             const errorMessage = e instanceof Error ? e.message : 'Failed to generate audio.';
             if (errorMessage.includes("API key is not configured")) {
-                setError("ElevenLabs API key is not set. Please configure it to use this feature.");
+                setError("ElevenLabs API key is invalid or not set. Please configure it to use this feature.");
             } else {
                 setError(errorMessage);
             }

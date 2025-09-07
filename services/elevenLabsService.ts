@@ -1,6 +1,4 @@
-if (!process.env.ELEVENLABS_API_KEY) {
-    console.warn("ELEVENLABS_API_KEY environment variable not set. Audio generation will fail.");
-}
+
 
 export const VOICES = [
     { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", description: "Calm & Clear" },
@@ -11,8 +9,8 @@ export const VOICES = [
 
 const FAL_RUN_TTS_URL = "https://fal.run/moments-ai/text-to-speech";
 
-export const generateSpeech = async (text: string, voiceId: string): Promise<string> => {
-    if (!process.env.ELEVENLABS_API_KEY) {
+export const generateSpeech = async (text: string, voiceId: string, apiKey: string | null): Promise<string> => {
+    if (!apiKey) {
         throw new Error("ElevenLabs API key is not configured.");
     }
     
@@ -25,7 +23,7 @@ export const generateSpeech = async (text: string, voiceId: string): Promise<str
             body: JSON.stringify({
                 text: text,
                 voice_id: voiceId,
-                api_key: process.env.ELEVENLABS_API_KEY, // Pass key for Fal script to use
+                api_key: apiKey, // Pass key for Fal script to use
             }),
         });
 
