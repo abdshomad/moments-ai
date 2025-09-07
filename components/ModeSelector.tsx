@@ -36,12 +36,14 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({ currentMode, onSelectMode }
         isActive={currentMode === GenerationMode.GENERATE}
         onClick={() => onSelectMode(GenerationMode.GENERATE)}
       />
-      <ModeButton
-        label="Enhance Existing Photo"
-        description="Upload a photo and transform it with your words."
-        isActive={currentMode === GenerationMode.EDIT}
-        onClick={() => onSelectMode(GenerationMode.EDIT)}
-      />
+      <div className="flex-1 flex" data-tour-id="step-1-mode">
+        <ModeButton
+          label="Enhance Existing Photo"
+          description="Upload a photo and transform it with your words."
+          isActive={currentMode === GenerationMode.EDIT}
+          onClick={() => onSelectMode(GenerationMode.EDIT)}
+        />
+      </div>
     </div>
   );
 };
